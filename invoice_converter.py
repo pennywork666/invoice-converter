@@ -436,10 +436,7 @@ def render_branding():
             f"""
             <div class="brand-bar">
                 <img class="brand-logo" src="data:image/png;base64,{logo_base64}" alt="Midea logo" />
-                <div class="brand-copy">
-                    <div class="brand-title">MARC Invoice Converter</div>
-                    <div class="brand-subtitle">Upload invoices and generate the Excel workbook.</div>
-                </div>
+                <div class="brand-title">MARC Invoice Converter</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -448,10 +445,7 @@ def render_branding():
         st.markdown(
             """
             <div class="brand-bar brand-bar-no-logo">
-                <div class="brand-copy">
-                    <div class="brand-title">MARC Invoice Converter</div>
-                    <div class="brand-subtitle">Upload invoices and generate the Excel workbook.</div>
-                </div>
+                <div class="brand-title">MARC Invoice Converter</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -484,33 +478,27 @@ def render_app():
         }
         .brand-bar {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            justify-content: center;
+            gap: 0.45rem;
+            margin: 0 auto 1.15rem auto;
+            text-align: center;
         }
         .brand-bar-no-logo {
             margin-bottom: 1.15rem;
         }
         .brand-logo {
-            height: 64px;
+            height: 74px;
             width: auto;
             object-fit: contain;
         }
-        .brand-copy {
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
         .brand-title {
             color: #083b78;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 800;
             line-height: 1.05;
             letter-spacing: -0.03em;
-        }
-        .brand-subtitle {
-            color: #426b96;
-            font-size: 0.98rem;
         }
         div[data-testid="stVerticalBlockBorderWrapper"] {
             border-radius: 24px;
