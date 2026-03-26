@@ -431,7 +431,31 @@ def trigger_download(file_bytes, filename):
 def render_branding():
     logo_path = Path(__file__).with_name("Midea.png")
     if logo_path.exists():
-        st.image(str(logo_path), width=132)
+        logo_base64 = base64.b64encode(logo_path.read_bytes()).decode("utf-8")
+        st.markdown(
+            f"""
+            <div class="brand-bar">
+                <img class="brand-logo" src="data:image/png;base64,{logo_base64}" alt="Midea logo" />
+                <div class="brand-copy">
+                    <div class="brand-title">MARC Invoice Converter</div>
+                    <div class="brand-subtitle">Upload invoices and generate the Excel workbook.</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            """
+            <div class="brand-bar brand-bar-no-logo">
+                <div class="brand-copy">
+                    <div class="brand-title">MARC Invoice Converter</div>
+                    <div class="brand-subtitle">Upload invoices and generate the Excel workbook.</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 
 def render_app():
@@ -458,20 +482,41 @@ def render_app():
             padding-top: 0.6rem;
             padding-bottom: 2rem;
         }
+        .brand-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .brand-bar-no-logo {
+            margin-bottom: 1.15rem;
+        }
+        .brand-logo {
+            height: 64px;
+            width: auto;
+            object-fit: contain;
+        }
+        .brand-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .brand-title {
+            color: #083b78;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+        .brand-subtitle {
+            color: #426b96;
+            font-size: 0.98rem;
+        }
         div[data-testid="stVerticalBlockBorderWrapper"] {
             border-radius: 24px;
             border: 1px solid rgba(0, 102, 179, 0.14);
             background: rgba(255, 255, 255, 0.90);
             box-shadow: 0 18px 45px rgba(17, 87, 151, 0.08);
-        }
-        h1 {
-            color: #083b78;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.35rem;
-        }
-        [data-testid="stCaptionContainer"] {
-            color: #426b96;
         }
         div[data-testid="stFileUploader"] section {
             border: 1px dashed rgba(0, 118, 212, 0.32);
@@ -502,10 +547,6 @@ def render_app():
             border: 1px solid rgba(0, 120, 212, 0.12);
             color: #0b457d;
         }
-        div[data-testid="stImage"] img {
-            display: block;
-            margin-bottom: 0.4rem;
-        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -514,7 +555,6 @@ def render_app():
     render_branding()
 
     with st.container(border=True):
-        st.subheader("Convert Invoices")
         uploaded_pdfs = st.file_uploader(
             "Invoice PDF files",
             type=["pdf"],
