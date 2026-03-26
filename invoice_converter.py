@@ -434,9 +434,13 @@ def render_branding():
         logo_base64 = base64.b64encode(logo_path.read_bytes()).decode("utf-8")
         st.markdown(
             f"""
-            <div class="brand-bar">
-                <img class="brand-logo" src="data:image/png;base64,{logo_base64}" alt="Midea logo" />
-                <div class="brand-title">MARC Invoice Converter</div>
+            <div class="brand-shell">
+                <div class="brand-logo-row">
+                    <img class="brand-logo" src="data:image/png;base64,{logo_base64}" alt="Midea logo" />
+                </div>
+                <div class="brand-title-row">
+                    <div class="brand-title">MARC Invoice Converter</div>
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -444,8 +448,10 @@ def render_branding():
     else:
         st.markdown(
             """
-            <div class="brand-bar brand-bar-no-logo">
-                <div class="brand-title">MARC Invoice Converter</div>
+            <div class="brand-shell">
+                <div class="brand-title-row">
+                    <div class="brand-title">MARC Invoice Converter</div>
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -476,20 +482,22 @@ def render_app():
             padding-top: 0.6rem;
             padding-bottom: 2rem;
         }
-        .brand-bar {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.45rem;
+        .brand-shell {
             margin: 0 auto 1.15rem auto;
+        }
+        .brand-logo-row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 0.35rem;
+        }
+        .brand-title-row {
+            display: flex;
+            justify-content: center;
             text-align: center;
         }
-        .brand-bar-no-logo {
-            margin-bottom: 1.15rem;
-        }
         .brand-logo {
-            height: 74px;
+            height: 62px;
             width: auto;
             object-fit: contain;
         }
