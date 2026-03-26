@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import base64
 import re
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 OUTPUT_COLUMNS = [
@@ -404,6 +406,28 @@ def build_input_signature(uploaded_pdfs, mode, existing_workbook):
     return (pdf_signature, mode, workbook_signature)
 
 
+def trigger_download(file_bytes, filename):
+    payload = base64.b64encode(file_bytes).decode("utf-8")
+    safe_name = filename.replace("\\", "_").replace('"', "_")
+    components.html(
+        f"""
+        <html>
+            <body>
+                <script>
+                    const link = document.createElement("a");
+                    link.href = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{payload}";
+                    link.download = "{safe_name}";
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                </script>
+            </body>
+        </html>
+        """,
+        height=0,
+    )
+
+
 def render_app():
     st.set_page_config(
         page_title="MARC Invoice Converter",
@@ -536,6 +560,8 @@ def render_app():
             "errors": errors,
             "workbook_bytes": workbook_bytes,
             "workbook_error": workbook_error,
+            "output_name": sanitize_output_filename(output_name),
+            "auto_download": bool(workbook_bytes and not workbook_error),
         }
 
     results = st.session_state.get("invoice_results")
@@ -547,6 +573,7 @@ def render_app():
     errors = results["errors"]
     workbook_bytes = results["workbook_bytes"]
     workbook_error = results.get("workbook_error")
+    generated_output_name = results.get("output_name", sanitize_output_filename(output_name))
 
     if rows:
         st.markdown(
@@ -562,14 +589,10 @@ def render_app():
         if workbook_error:
             st.error(f"Excel generation failed: {workbook_error}")
         elif workbook_bytes:
-            st.download_button(
-                label="Download Converted Excel",
-                data=workbook_bytes,
-                file_name=sanitize_output_filename(output_name),
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                type="primary",
-                use_container_width=True,
-            )
+            if results.get("auto_download"):
+                trigger_download(workbook_bytes, generated_output_name)
+                st.session_state["invoice_results"]["auto_download"] = False
+            st.success(f"Excel file is ready and download has started: {generated_output_name}")
     else:
         st.error("No valid invoice data was extracted from the uploaded PDFs.")
 
