@@ -428,6 +428,12 @@ def trigger_download(file_bytes, filename):
     )
 
 
+def render_branding():
+    logo_path = Path(__file__).with_name("Midea.png")
+    if logo_path.exists():
+        st.image(str(logo_path), width=132)
+
+
 def render_app():
     st.set_page_config(
         page_title="MARC Invoice Converter",
@@ -444,9 +450,12 @@ def render_app():
                 radial-gradient(circle at top left, rgba(9, 70, 145, 0.10), transparent 28%),
                 linear-gradient(180deg, #f5fbff 0%, #edf6fd 100%);
         }
+        header[data-testid="stHeader"] {
+            display: none;
+        }
         .block-container {
             max-width: 920px;
-            padding-top: 2.5rem;
+            padding-top: 0.6rem;
             padding-bottom: 2rem;
         }
         div[data-testid="stVerticalBlockBorderWrapper"] {
@@ -493,13 +502,16 @@ def render_app():
             border: 1px solid rgba(0, 120, 212, 0.12);
             color: #0b457d;
         }
+        div[data-testid="stImage"] img {
+            display: block;
+            margin-bottom: 0.4rem;
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    st.title("MARC Invoice Converter")
-    st.caption("Upload invoice PDFs and generate the Excel file directly.")
+    render_branding()
 
     with st.container(border=True):
         st.subheader("Convert Invoices")
@@ -529,11 +541,9 @@ def render_app():
         )
 
     if not uploaded_pdfs:
-        st.info("Upload at least one PDF invoice to start.")
         return
 
     if mode == "Append to existing workbook" and existing_workbook is None:
-        st.info("Upload the existing Excel workbook to append new rows.")
         return
 
     input_signature = build_input_signature(uploaded_pdfs, mode, existing_workbook)
@@ -566,7 +576,6 @@ def render_app():
 
     results = st.session_state.get("invoice_results")
     if not results or results.get("signature") != input_signature:
-        st.info("Click `Generate workbook` to process the current files.")
         return
 
     rows = results["rows"]
